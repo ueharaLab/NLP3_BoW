@@ -123,8 +123,8 @@ with codecs.open("tsukurepo_bow.csv", "w", "ms932", "ignore") as f:
 
 3.  [BoW_barChats.py](bow_barChart.py)を参考にして、シュークリーム、プリンそれぞれの棒グラフを表示できるように修正せよ（2.のフィルタリングを行うこと）。注意点は以下。    
    ・import japanize_matplotlib:日本語表示の文字化けを解消する  
-   ・シュークリーム、プリンに分けて表示するには予めbow_dfを、それぞれに分けておく必要がある。
-   ・bow_dfから、シュークリーム、プリン　それぞれのベクトルを[条件抽出](https://deepage.net/features/pandas-cond-extraction.html)するには、tsukurepoとbow_dfを[concat](https://deepage.net/features/pandas-concat.html)する。  
+   ・シュークリーム、プリンに分けて表示するには予めbow_dfを、それぞれに分けておく必要がある。  
+     ・bow_dfから、シュークリーム、プリン　それぞれのベクトルを[条件抽出](https://deepage.net/features/pandas-cond-extraction.html)するには、tsukurepoとbow_dfを[concat](https://deepage.net/features/pandas-concat.html)する。  
  ・上記で条件抽出したDataFrameの平均を計算するには[こちら](https://deepage.net/features/pandas-mean.html#%E5%88%97%E3%81%94%E3%81%A8%E3%81%AE%E5%B9%B3%E5%9D%87%E3%82%92%E6%B1%82%E3%82%81%E3%82%8B)。  
  ・複数のグラフを分割表示するには[subplot](https://stats.biopapyrus.jp/python/subplot.html)
 

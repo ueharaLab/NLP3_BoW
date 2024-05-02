@@ -1,7 +1,7 @@
 import MeCab
 
-tagger = MeCab.Tagger()
-
+#tagger = MeCab.Tagger()
+tagger = MeCab.Tagger("mecabrc -u c:/neologd/NEologd.dic")
 
 def tokenize(texts):
     token = tagger.parseToNode(texts)
