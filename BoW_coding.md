@@ -4,7 +4,7 @@
 1. このプログラムはどこから実行が開始されるか
 2. def create_dict(tokens):  はBoW辞書を作成する関数だが、これでどのようにBoW辞書が作成しているのか  
    for recipe in recipes:は何をやっているか。
-3. for recipe in recipes:でBoWのデータ部分（単語ベクトル）を作成している。このコーディングの意味を解釈せよ。
+3. def word_vec( でBoWのデータ部分（単語ベクトル）を作成している。このコーディングの意味を解釈せよ。
 4. BoW辞書とBoWデータ部分とを連結してBoWデータセットを完成している部分はどこか  
    
 [bow_recipe.py](bow_recipe.py)
