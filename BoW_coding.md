@@ -65,7 +65,7 @@ with codecs.open("./data/recipe_bow.csv", "w", "ms932", "ignore") as f:
 ## 2. 応用演習：csvから文書を読み込んでBoWにする
 bow_recipe.pyでは、形態素解析済のデータからBoWを作成したが、以下ではtsukurepo_simple.csvからツクレポのクチコミを1件づつ取り出して、形態素解析をやってからBoWを作成する。  
 [bow_tsukurepo.py](bow_tsukurepo.py)の
-\###  ###で囲まれた部分に適切なコーディングを書き込んでプログラムを完成させよ。なおコーディングすべき処理は該当箇所に記述している。bow_recipe.pyと比較すると参考になる。  
+\###  ###で囲まれた部分に適切なコーディングを書き込んでプログラムを完成させよ。上記bow_recipe.pyのrecipesと同じ単語の2次元配列が作れればOK。コーディングすべき処理手順は### ###内に記述している。bow_recipe.pyと比較すると参考になる。  
 from tokenizer import tokenizeは、形態素解析の関数。このプログラムを開くと処理内容がわかる。
 
 bow_tsukurepo.pyの中身
@@ -75,6 +75,17 @@ import pandas as pd
 import codecs
 import numpy as np
 from tokenizer import tokenize
+
+
+tsukurepo_df = pd.read_csv('./data/tsukurepo_simple.csv', encoding='ms932', sep=',',skiprows=0)
+
+recipes =[]
+###
+1. tsukurepo_dfから、'tsukurepo'の文書を1行づつ読み込む
+2. 1行毎に形態素解析して語彙のリストを作成する（形態素解析は外部の関数 tokenizerを使う。
+   この関数は形態素解析した結果（単語列）をリスト型で返却する）
+3. 2.の結果をrecipesに加える
+###
 
 def create_dict(tokens):  # <2>
     # Build vocabulary <3>
@@ -97,43 +108,33 @@ def word_vec(vocabulary,review):
 
     return word_vector
 
-tsukurepo_df = pd.read_csv('tsukurepo_simple.csv', encoding='ms932', sep=',',skiprows=0)
 
 tokens =[]
-###
-tsukurepo_dfから'tsukurepo'の文書（口コミ）を1件づつ
-取り出して形態素解析する。
-（形態素解析は、外部の関数 tokenizerを使う。この関数は
-　形態素解析した結果（単語列）をリスト型で返却する）
-形態素解析した結果をtokensの要素にする
-###
+for recipe in recipes:
+    tokens += recipe 
+ 
+
 vocabulary_dic = create_dict(tokens)
+#print(vocabulary_dic)
 
 bow =[]
-###
-以下の処理を文書（口コミ）毎に繰り返す
+for recipe in recipes:
+    word_vector = word_vec(vocabulary_dic,recipe)    
+    bow.append(word_vector)
 
-1) tsukurepo_dfから'tsukurepo'の文書（口コミ）を1件づつ
-取り出して形態素解析する。
-（形態素解析は、外部の関数 tokenizerを使う。この関数は
-　形態素解析した結果（単語列）をリスト型で返却する）
-
-2) 形態素のリストを単語ベクトルに変換する
-
-3) bowに単語ベクトルを追加する
-###
 
 col = [v for v,i in vocabulary_dic.items()]
 bow_df = pd.DataFrame(bow,columns=col)
-with codecs.open("tsukurepo_bow.csv", "w", "ms932", "ignore") as f:   
+with codecs.open("./data/tsukurepo_bow.csv", "w", "ms932", "ignore") as f:   
     bow_df.to_csv(f, index=False, encoding="ms932", mode='w', header=True)
+
 ```
 
 ## 3.CountvectorizerによるBoWの作成
-1. 上記2.と同じデータtsukurepo_simple.csvからBoWを作成する。当然、結果は同じになる。  
+1. 上記2.と同じデータtsukurepo_simple.csvからBoWを作成する [countVectorizer_simple.py](countVectorizer_simple.py)。当然、結果は同じになる。  
 ただし、Countvectorizerでは、英語は自動的に小文字変換する。そのため、大文字と小文字が混在している場合、小文字に統一される。これが原因で、BoW辞書の次元数は、Countvectorizerの方が１つだけ小さい。
 
-2. 以下のパラメータを追加して低頻度語彙・汎用語彙のフィルタリングをしてみよ。次元数が相当削減されるはず。 
+2. 以下のパラメータを追加して低頻度語彙・汎用語彙のフィルタリングをしてみよ。次元数が相当削減されるはず。   
    min_df=0.05, max_df=0.3
 
 3.  [BoW_barChats.py](bow_barChart.py)を参考にして、シュークリーム、プリンそれぞれの棒グラフを表示できるように修正せよ（2.のフィルタリングを行うこと）。注意点は以下。    

@@ -3,6 +3,20 @@ import codecs
 import numpy as np
 from tokenizer import tokenize
 
+
+tsukurepo_df = pd.read_csv('./data/tsukurepo_simple.csv', encoding='ms932', sep=',',skiprows=0)
+
+recipes =[]
+###
+1. tsukurepo_dfから、'tsukurepo'の文書を1行づつ読み込む
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+2. 1行毎に形態素解析して語彙のリストを作成する（形態素解析は外部の関数 tokenizerを使う。
+   この関数は形態素解析した結果（単語列）をリスト型で返却する）
+3. 2.の結果をrecipesに加える
+###
+
+
 def create_dict(tokens):  # <2>
     # Build vocabulary <3>
     vocabulary = {}
@@ -24,31 +38,20 @@ def word_vec(vocabulary,review):
 
     return word_vector
 
-tsukurepo_df = pd.read_csv('./data/tsukurepo_simple.csv', encoding='ms932', sep=',',skiprows=0)
 
 tokens =[]
-###
-tsukurepo_dfから'tsukurepo'の文書（口コミ）を1件づつ
-取り出して形態素解析する。
-（形態素解析は、外部の関数 tokenizerを使う。この関数は
-　形態素解析した結果（単語列）をリスト型で返却する）
-形態素解析した結果をtokensの要素にする
-###
+for recipe in recipes:
+    tokens += recipe 
+ 
+
 vocabulary_dic = create_dict(tokens)
+#print(vocabulary_dic)
 
 bow =[]
-###
-以下の処理を文書（口コミ）毎に繰り返す
+for recipe in recipes:
+    word_vector = word_vec(vocabulary_dic,recipe)    
+    bow.append(word_vector)
 
-1) tsukurepo_dfから'tsukurepo'の文書（口コミ）を1件づつ
-取り出して形態素解析する。
-（形態素解析は、外部の関数 tokenizerを使う。この関数は
-　形態素解析した結果（単語列）をリスト型で返却する）
-
-2) 形態素のリストを単語ベクトルに変換する
-
-3) bowに単語ベクトルを追加する
-###
 
 col = [v for v,i in vocabulary_dic.items()]
 bow_df = pd.DataFrame(bow,columns=col)
