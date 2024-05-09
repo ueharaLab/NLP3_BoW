@@ -63,10 +63,12 @@ with codecs.open("./data/recipe_bow.csv", "w", "ms932", "ignore") as f:
 ```
 
 ## 2. 応用演習：csvから文書を読み込んでBoWにする
-bow_recipe.pyでは、形態素解析済のデータからBoWを作成したが、以下ではtsukurepo_simple.csvからツクレポのクチコミを1件づつ取り出して、形態素解析をやってからBoWを作成する。  
+bow_recipe.pyでは、形態素解析済のデータからBoWを作成したが、以下ではtsukurepo_simple.csvからツクレポのクチコミを1件づつ取り出して、形態素解析をやってからBoWを作成する。
 [bow_tsukurepo.py](bow_tsukurepo.py)の
 \###  ###で囲まれた部分に適切なコーディングを書き込んでプログラムを完成させよ。上記bow_recipe.pyのrecipesと同じ単語の2次元配列が作れればOK。コーディングすべき処理手順は### ###内に記述している。bow_recipe.pyと比較すると参考になる。  
-from tokenizer import tokenizeは、形態素解析の関数。このプログラムを開くと処理内容がわかる。
+from tokenizer import tokenizeは、形態素解析の関数。このプログラムを開くと処理内容がわかる。 
+
+なお、このファイルにはシュークリーム、プリンのラベルがついているが、ここでは使わない。  
 
 bow_tsukurepo.pyの中身
 
@@ -137,33 +139,45 @@ with codecs.open("./data/tsukurepo_bow.csv", "w", "ms932", "ignore") as f:
 2. 以下のパラメータを追加して低頻度語彙・汎用語彙のフィルタリングをしてみよ。次元数が相当削減されるはず。   
    min_df=0.05, max_df=0.3
 
-3.  [BoW_barChats.py](bow_barChart.py)を参考にして、シュークリーム、プリンそれぞれの棒グラフを表示できるように修正せよ（2.のフィルタリングを行うこと）。注意点は以下。    
+3.  [countVectorizer_simple.py](countVectorizer_simple.py)で作成したbowにラベル、シュークリーム/プリンを付けて、シュークリーム/プリン別にbowの平均ベクトルを棒グラフに表示するプログラム[countVectorizer_barChart.py](countVectorizer_barChart.py) を完成せよ（追記すべき個所に### ###で詳細を記載した）。このまま実行すると、ブランクのグラフ区画が表示されるので、確認すること。
+   [注意点]  
    ・import japanize_matplotlib:日本語表示の文字化けを解消する  
    ・シュークリーム、プリンに分けて表示するには予めbow_dfを、それぞれに分けておく必要がある。  
      ・bow_dfから、シュークリーム、プリン　それぞれのベクトルを[条件抽出](https://deepage.net/features/pandas-cond-extraction.html)するには、tsukurepoとbow_dfを[concat](https://deepage.net/features/pandas-concat.html)する。  
  ・上記で条件抽出したDataFrameの平均を計算するには[こちら](https://deepage.net/features/pandas-mean.html#%E5%88%97%E3%81%94%E3%81%A8%E3%81%AE%E5%B9%B3%E5%9D%87%E3%82%92%E6%B1%82%E3%82%81%E3%82%8B)。  
  ・複数のグラフを分割表示するには[subplot](https://stats.biopapyrus.jp/python/subplot.html)
 
-
-
-#### 注意点
-- bow = vectorizer.transform(texts)で生成されるデータは０要素を省略したもの
-- toarray()メソッドは、それを変換して次元数を揃えるもの
-
 ``` python
-
-tsukurepo = pd.read_csv('tsukurepo_simple.csv', encoding='ms932', sep=',',skiprows=0)
-texts = tsukurepo['tsukurepo']
-
-vectorizer = CountVectorizer(tokenizer=tokenize)  # <2>　引数に形態素解析エンジンを渡す
-vec=vectorizer.fit(texts)  
-bow = vectorizer.transform(texts)  
-
-print(vec.get_feature_names()) # 見出し（辞書）が表示される
-print(bow)# BoWが転置されて表示される。また非ゼロのものだけが表示される
-print(bow.toarray()) # これでBoWが表示される
-
-
 bow_df = pd.DataFrame(bow.toarray(), columns=vectorizer.get_feature_names())
-```
 
+
+with codecs.open("./data/tsukurepo_bow_vectorizer.csv", "w", "ms932", "ignore") as f:   
+    bow_df.to_csv(f, index=False, encoding="ms932", mode='w', header=True)
+
+bow_df=pd.concat([tsukurepo['keyword'],bow_df],axis=1)
+column_name = bow_df.columns[1:]
+syu = bow_df[bow_df['keyword']=='シュークリーム'].iloc[:,1:]
+syu_mean = [v for k,v in syu.mean().items()]
+'''
+###
+1.プリンのデータのみbow_dfからbowを抽出する
+2. このbowの列毎の平均値をベクトル化してリストにする
+###
+'''
+fig = plt.figure()
+ax1=fig.add_subplot(211,title='シュークリーム')
+ax1.bar(np.arange(len(syu_mean)), np.array(syu_mean), tick_label=column_name, align="center")
+ax1.set_xticks(np.arange(len(syu_mean)))
+ax1.set_xticklabels(column_name, rotation=45, ha='right',fontsize=14)
+#ax1.xticks(np.arange(len(udon_val)),udon_key)
+ax2=fig.add_subplot(212,title='プリン')
+'''
+###
+上記シュークリームの棒グラフと同様に、プリンのbow平均を棒グラフにする
+###
+'''
+#ax1.xticks(np.arange(len(ramen_val)),ramen_key)
+plt.subplots_adjust(wspace=0.4, hspace=0.3)
+plt.show()
+
+```
