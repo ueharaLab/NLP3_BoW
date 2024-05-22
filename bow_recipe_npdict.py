@@ -14,22 +14,17 @@ recipes = [['チョコレート','バター', '卵', '砂糖', '小麦粉', '好
 
 
 def create_dict(tokens):  # <2>
-    # Build vocabulary <3>
-    vocabulary = {}
-
-    for token in tokens:
-        if token not in vocabulary:
-            vocabulary[token] = len(vocabulary)
-            #print(vocabulary)
+    vocabulary = np.array(list(set(tokens)))   
+    
     return vocabulary
 
 def word_vec(vocabulary,review):
     
     # Build BoW Feature Vector <4>
-    word_vector = [0]*len(vocabulary) 
-    #word_vector = np.zeros(len(vocabulary))    
-    for i, word in enumerate(review):
-       
+    #word_vector = [0]*len(vocabulary) 
+    word_vector = np.zeros(len(vocabulary))    
+    for i, word in enumerate(review):       
+        
         index = vocabulary[word]
         word_vector[index] += 1
 
@@ -40,7 +35,7 @@ for recipe in recipes:
     tokens += recipe  
 
 vocabulary_dic = create_dict(tokens)
-
+print(vocabulary_dic)
 bow =[]
 for recipe in recipes:
     word_vector = word_vec(vocabulary_dic,recipe)    

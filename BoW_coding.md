@@ -61,7 +61,57 @@ bow_df = pd.DataFrame(bow,columns=col)
 with codecs.open("./data/recipe_bow.csv", "w", "ms932", "ignore") as f:   
     bow_df.to_csv(f, index=False, encoding="ms932", mode='w', header=True)
 ```
+5. 以下のコーディングは上記と同じ結果を出力するものだが、BoWの辞書を作成する関数　def create_dict(tokens): においてnumpyの配列としてBoW辞書を作成している。  
+   この辞書で上記と同じ結果が得られるように、[bow_recipe_npdict.py](./bow_recipe_npdict.py)のdef word_vec(vocabulary,review):および関連する部分を修正せよ。  
+   ヒント：numpy配列からインデックスを取り出す構文 ' np.where' を使う
 
+``` python
+recipes = [['チョコレート','バター', '卵', '砂糖', '小麦粉', '好きジャム'],
+['生クリーム', 'チョコ', 'バター', '砂糖', '卵', '小麦粉'],
+['卵', 'グラニュー', 'チョコレート', '食塩', '小麦粉', '卵白'],
+['フォンダンショコラ', 'アイスクリーム', 'イチゴ', 'コイン'],
+['チョコレート', '卵', '砂糖', '小麦粉', 'バター', '生地'],
+['チョコレート', 'バター', '卵', 'グラニュー', '小麦粉'],
+['チョコ', 'バター', 'ココア'],
+['チョコレート', '食塩', '卵', '砂糖', '小麦粉'],
+['チョコレート', '生クリーム', '酒', 'チョコレート', '生クリーム', '卵黄', '卵白', '食塩', 'グラニュー', 'ココア', 'インスタント']]
+
+
+def create_dict(tokens):  # <2>
+    vocabulary = np.array(list(set(tokens)))   
+    
+    return vocabulary
+
+def word_vec(vocabulary,review):
+    
+    # Build BoW Feature Vector <4>
+    #word_vector = [0]*len(vocabulary) 
+    word_vector = np.zeros(len(vocabulary))    
+    for i, word in enumerate(review):       
+        
+        index = vocabulary[word]
+        word_vector[index] += 1
+
+    return word_vector
+
+tokens =[]
+for recipe in recipes:
+    tokens += recipe  
+
+vocabulary_dic = create_dict(tokens)
+print(vocabulary_dic)
+bow =[]
+for recipe in recipes:
+    word_vector = word_vec(vocabulary_dic,recipe)    
+    bow.append(word_vector)
+
+col = [v for v,i in vocabulary_dic.items()]
+bow_df = pd.DataFrame(bow,columns=col)
+with codecs.open("./data/recipe_bow.csv", "w", "ms932", "ignore") as f:   
+    bow_df.to_csv(f, index=False, encoding="ms932", mode='w', header=True)
+```
+
+   
 ## 2. 応用演習：csvから文書を読み込んでBoWにする
 bow_recipe.pyでは、形態素解析済のデータからBoWを作成したが、以下ではtsukurepo_simple.csvからツクレポのクチコミを1件づつ取り出して、形態素解析をやってからBoWを作成する。
 [bow_tsukurepo.py](bow_tsukurepo.py)の
