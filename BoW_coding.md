@@ -189,7 +189,27 @@ with codecs.open("./data/tsukurepo_bow.csv", "w", "ms932", "ignore") as f:
 2. 以下のパラメータを追加して低頻度語彙・汎用語彙のフィルタリングをしてみよ。次元数が相当削減されるはず。   
    min_df=0.05, max_df=0.3
 
-3.  [countVectorizer_simple.py](countVectorizer_simple.py)で作成したbowにラベル、シュークリーム/プリンを付けて、シュークリーム/プリン別にbowの平均ベクトルを棒グラフに表示するプログラム[countVectorizer_barChart.py](countVectorizer_barChart.py) を完成せよ（追記すべき個所に### ###で詳細を記載した）。このまま実行すると、ブランクのグラフ区画が表示されるので、確認すること。
+3. tabelog.csvを読み込んでcolumn 'texts'の口コミ本体をBoWにするプログラム[countVectorizer_tabelog.py](countVectorizer_tabelog.py)を完成せよ。
+   - 1.のプログラムを修正すればOK
+``` python
+from tokenizer import tokenize  
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+import codecs
+
+
+tabelog = pd.read_csv('./data/tabelog.csv', encoding='ms932', sep=',',skiprows=0)
+
+'''
+countVectorizerを使ってtabelogのtextsをBoWに変換するコーディングを書く
+
+'''
+
+with codecs.open("./data/tabelog_bow_vectorizer.csv", "w", "ms932", "ignore") as f:   
+    bow_df.to_csv(f, index=False, encoding="ms932", mode='w', header=True)
+```
+
+4.  [countVectorizer_simple.py](countVectorizer_simple.py)で作成したbowにラベル、シュークリーム/プリンを付けて、シュークリーム/プリン別にbowの平均ベクトルを棒グラフに表示するプログラム[countVectorizer_barChart.py](countVectorizer_barChart.py) を完成せよ（追記すべき個所に### ###で詳細を記載した）。このまま実行すると、ブランクのグラフ区画が表示されるので、確認すること。
    [注意点]  
    ・import japanize_matplotlib:日本語表示の文字化けを解消する  
    ・シュークリーム、プリンに分けて表示するには予めbow_dfを、それぞれに分けておく必要がある。  

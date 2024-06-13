@@ -9,8 +9,6 @@ tsukurepo_df = pd.read_csv('./data/tsukurepo_simple.csv', encoding='ms932', sep=
 recipes =[]
 ###
 1. tsukurepo_dfから、'tsukurepo'の文書を1行づつ読み込む
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-
 2. 1行毎に形態素解析して語彙のリストを作成する（形態素解析は外部の関数 tokenizerを使う。
    この関数は形態素解析した結果（単語列）をリスト型で返却する）
 3. 2.の結果をrecipesに加える
