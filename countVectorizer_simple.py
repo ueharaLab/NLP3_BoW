@@ -11,12 +11,12 @@ vectorizer = CountVectorizer(tokenizer=tokenize)  # <2>　引数に形態素解�
 vec=vectorizer.fit(texts)  
 bow = vectorizer.transform(texts) 
 
-print(vec.get_feature_names()) # 見出し（辞書）が表示される
+print(vec.get_feature_names_out()) # 見出し（辞書）が表示される
 print(bow)# BoWが転置されて表示される。また非ゼロのものだけが表示される
 print(bow.toarray()) # これでBoWが表示される
 
 
-bow_df = pd.DataFrame(bow.toarray(), columns=vectorizer.get_feature_names())
+bow_df = pd.DataFrame(bow.toarray(), columns=vectorizer.get_feature_names_out())
 print(bow_df)
 
 with codecs.open("./data/tsukurepo_bow_vectorizer.csv", "w", "ms932", "ignore") as f:   
